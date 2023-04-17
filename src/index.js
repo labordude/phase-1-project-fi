@@ -14,7 +14,7 @@ addEventListener('DOMContentLoaded', () => {
     stories: baseUrl + 'stories',
   };
   const characterList = document.querySelector('#character-list');
-  const characterDetails = document.querySelector('#character-details');
+  const characterSection = document.querySelector('#characters');
 
   /**********VARIABLE DECLARATION END***********/
 
@@ -101,9 +101,22 @@ addEventListener('DOMContentLoaded', () => {
   function renderOneCharacter(character) {
     console.log(character);
     //create elements
-    let characterDiv = document.createElement('div');
+    let characterCard = document.createElement('div');
     let characterImage = document.createElement('img');
-    let characterTitle = document.createElement('h2');
+    let characterName = document.createElement('h3');
+    let characterSeries = document.createElement('p');
+    let characterComics = document.createElement('p');
+    let characterEvents = document.createElement('p');
+    let characterStories = document.createElement('p');
+    //populate
+    characterCard.classList.add('character-card');
+    characterCard.setAttribute('data-id', character.id);
+    characterImage.src = `${character.thumbnail.path}.${character.thumbnail.extension}`;
+    characterName.classList.add('character-name')
+    characterName.textContent = character.name;
+
+    characterCard.append(characterImage, characterName);
+    characterSection.appendChild(characterCard);
   }
 
   /**********DOM RENDER FUNCTIONS END***********/
@@ -112,7 +125,7 @@ addEventListener('DOMContentLoaded', () => {
   function getAll() {
     rover
       .get(marvel.characters + tsString + apikey + hashString)
-      .then((characters) => renderAllImages(characters));
+      .then((characters) => renderAllCharacters(characters));
   }
 
   function getOne() {
