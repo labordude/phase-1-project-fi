@@ -1,0 +1,23 @@
+{
+  "name": "phase-1-project-fi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/labordude/phase-1-project-fi.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/labordude/phase-1-project-fi/issues"
+  },
+  "homepage": "https://github.com/labordude/phase-1-project-fi#readme",
+  "dependencies": {
+    "blueimp-md5": "^2.19.0"
+  }
+}
