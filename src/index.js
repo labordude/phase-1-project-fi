@@ -109,10 +109,17 @@ addEventListener('DOMContentLoaded', () => {
     let characterEvents = document.createElement('p');
     let characterStories = document.createElement('p');
     //populate
-    characterCard.classList.add('character-card');
+    characterCard.classList.add(
+      'block',
+      'rounded-lg',
+      'bg-white',
+      'shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]',
+      'dark:bg-neutral-700'
+    );
     characterCard.setAttribute('data-id', character.id);
     characterImage.src = `${character.thumbnail.path}.${character.thumbnail.extension}`;
-    characterName.classList.add('character-name')
+    characterImage.classList.add('object-cover', 'max-h-72');
+    characterName.classList.add('character-name');
     characterName.textContent = character.name;
 
     characterCard.append(characterImage, characterName);
