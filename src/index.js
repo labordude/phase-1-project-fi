@@ -1,123 +1,94 @@
-addEventListener('DOMContentLoaded', () => {
-  /**********DELIVERABLES START*****************/
+const clientId = config.clientID;
+const redirectUri = 'http://localhost:5502';
+//initial
+let codeVerifier = generateRandomString(128);
+function initialize() {
+  generateCodeChallenge(codeVerifier).then((codeChallenge) => {
+    let state = generateRandomString(16);
+    let scope =
+      'user-read-private user-read-email user-read-currently-playing user-top-read user-read-recently-played user-library-read';
 
-  /**********DELIVERABLES END*******************/
+    localStorage.setItem('code_verifier', codeVerifier);
 
-  /**********VARIABLE DECLARATION START*********/
-  const baseUrl = `https://gateway.marvel.com/v1/public/`;
-  const marvel = {
-    characters: baseUrl + 'characters',
-    comics: baseUrl + 'comics',
-    creators: baseUrl + 'creators',
-    events: baseUrl + 'events',
-    series: baseUrl + 'series',
-    stories: baseUrl + 'stories',
-  };
-  const characterList = document.querySelector('#character-list');
-  const characterDetails = document.querySelector('#character-details');
+    let args = new URLSearchParams({
+      response_type: 'code',
+      client_id: clientId,
+      scope: scope,
+      redirect_uri: redirectUri,
+      state: state,
+      code_challenge_method: 'S256',
+      code_challenge: codeChallenge,
+    });
 
-  /**********VARIABLE DECLARATION END***********/
+    window.location = 'https://accounts.spotify.com/authorize?' + args;
+  });
+}
+initialize();
+function getAccessToken() {
+  let codeVerifier = localStorage.getItem('code_verifier');
 
-  /**********FETCH REQUESTS START***************/
-  const rover = {
-    get: function getJSON(url) {
-      return fetch(url)
-        .then((response) => {
-          if (response.ok) {
-            // console.log(response.json());
-            return response.json();
-          } else {
-            throw response.statusText;
-          }
-        })
-        .catch((error) => console.log(error.message));
+  let body = new URLSearchParams({
+    grant_type: 'authorization_code',
+    code: code,
+    redirect_uri: redirectUri,
+    client_id: clientId,
+    code_verifier: codeVerifier,
+  });
+  const response = fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
+    body: body,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('HTTP status ' + response.status);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      localStorage.setItem('access_token', data.access_token);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
 
-    patch: function postJSON(url, data) {
-      return fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw response.statusText;
-          }
-        })
-        .catch((error) => console.log(error.message));
+async function getProfile() {
+  let accessToken = localStorage.getItem('access_token');
+
+  const response = await fetch('https://api.spotify.com/v1/me', {
+    headers: {
+      Authorization: 'Bearer ' + accessToken,
     },
-  };
-  /**********FETCH REQUESTS END*****************/
+  });
 
-  /**********EVENT LISTENERS START**************/
+  const data = await response.json();
+}
 
-  /**********EVENT LISTENERS END****************/
-
-  /**********FORM PROCESSING START**************/
-  //handle input from search form
-  function handleForm(event) {
-    event.preventDefault();
-    console.log(event);
+async function generateCodeChallenge(codeVerifier) {
+  function base64encode(string) {
+    return btoa(String.fromCharCode.apply(null, new Uint8Array(string)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
   }
 
-  function handleClick(event) {
-    console.log(event);
-  }
-  /**********FORM PROCESSING END****************/
+  const encoder = new TextEncoder();
+  const data = encoder.encode(codeVerifier);
+  const digest = await window.crypto.subtle.digest('SHA-256', data);
 
-  /**********DOM RENDER FUNCTIONS START*********/
-  function renderAllImages(characters) {
-    characters.data.results.forEach((character) => renderImage(character));
-  }
+  return base64encode(digest);
+}
+//generation of random string
+function generateRandomString(length) {
+  let text = '';
+  let possible =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-  function renderImage(character) {
-    //create elements
-    let characterImage = document.createElement('img');
-
-    //populate attributes, classes, and text
-    characterImage.setAttribute('data-id', character.id);
-    characterImage.src = `${character.thumbnail.path}.${character.thumbnail.extension}`;
-    console.log(characterImage.src);
-    if (
-      characterImage.src ===
-      'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
-    ) {
-      return false;
-    } else {
-      //append to DOM
-      characterList.append(characterImage);
-    }
+  for (let i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
-  function renderAllCharacters(characters) {
-    characters.data.results.forEach((character) =>
-      renderOneCharacter(character)
-    );
-  }
-
-  function renderOneCharacter(character) {
-    console.log(character);
-    //create elements
-    let characterDiv = document.createElement('div');
-    let characterImage = document.createElement('img');
-    let characterTitle = document.createElement('h2');
-  }
-
-  /**********DOM RENDER FUNCTIONS END***********/
-
-  /***********GENERAL FUNCTIONS START***********/
-  function getAll() {
-    rover
-      .get(marvel.characters + tsString + apikey + hashString)
-      .then((characters) => renderAllImages(characters));
-  }
-
-  function getOne() {
-    getJSON;
-  }
-  getAll();
-  /***********GENERAL FUNCTIONS END*************/
-});
+  return text;
+}
