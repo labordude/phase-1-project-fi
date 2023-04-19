@@ -4,18 +4,22 @@ addEventListener('DOMContentLoaded', () => {
   /**********DELIVERABLES END*******************/
 
   /**********VARIABLE DECLARATION START*********/
-  const baseUrl = `https://gateway.marvel.com/v1/public/`;
-  const marvel = {
-    characters: baseUrl + 'characters',
-    comics: baseUrl + 'comics',
-    creators: baseUrl + 'creators',
-    events: baseUrl + 'events',
-    series: baseUrl + 'series',
-    stories: baseUrl + 'stories',
-  };
-  const characterList = document.querySelector('#character-list');
-  const characterDetails = document.querySelector('#character-details');
 
+  const endpoints = {
+    users: 'users',
+    games: 'games',
+    platforms: 'platforms',
+    genres: 'genres',
+    developers: 'developers',
+    favorites: 'favorites',
+    collections: 'collections',
+  };
+  
+  const rawgUrl = `https://api.rawg.io/api/`;
+  
+  const gamesList = document.querySelector('#games-list');
+  const gameDetails = document.querySelector('#game-details');
+  let currentGame;
   /**********VARIABLE DECLARATION END***********/
 
   /**********FETCH REQUESTS START***************/
@@ -74,36 +78,16 @@ addEventListener('DOMContentLoaded', () => {
     characters.data.results.forEach((character) => renderImage(character));
   }
 
-  function renderImage(character) {
+  function renderImage(game) {
     //create elements
-    let characterImage = document.createElement('img');
+    let gameImage = document.createElement('img');
 
     //populate attributes, classes, and text
-    characterImage.setAttribute('data-id', character.id);
-    characterImage.src = `${character.thumbnail.path}.${character.thumbnail.extension}`;
-    console.log(characterImage.src);
-    if (
-      characterImage.src ===
-      'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
-    ) {
-      return false;
-    } else {
-      //append to DOM
-      characterList.append(characterImage);
-    }
-  }
-  function renderAllCharacters(characters) {
-    characters.data.results.forEach((character) =>
-      renderOneCharacter(character)
-    );
-  }
 
-  function renderOneCharacter(character) {
-    console.log(character);
-    //create elements
-    let characterDiv = document.createElement('div');
-    let characterImage = document.createElement('img');
-    let characterTitle = document.createElement('h2');
+    gameImage.src = game.background_image;
+    console.log(gameImage.src);
+    //append to DOM
+    gamesList.append(gameImage);
   }
 
   /**********DOM RENDER FUNCTIONS END***********/
@@ -111,13 +95,22 @@ addEventListener('DOMContentLoaded', () => {
   /***********GENERAL FUNCTIONS START***********/
   function getAll() {
     rover
-      .get(marvel.characters + tsString + apikey + hashString)
-      .then((characters) => renderAllImages(characters));
+      .get(
+        `${rawgUrl}${endpoints.users}/${config.me}/${endpoints.games}?statuses=playing&key=${config.apikey}`
+      )
+      .then((games) => {
+        console.log(games);
+        games.results.map((game) => {
+          renderImage(game);
+        });
+      });
   }
 
   function getOne() {
     getJSON;
   }
   getAll();
+
+  function my(section = '') {}
   /***********GENERAL FUNCTIONS END*************/
 });
