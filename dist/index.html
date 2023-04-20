@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./js/md5.min.js"></script>
+    <script src="./js/config.js"></script>
+
+    <title>Playground</title>
+  </head>
+  <body>
+    <header class="navbar">
+      <img src="./images/logo.svg" alt="ifmikethencode logo" id="header-logo" class="h-12"/>
+      <div class="hidden space-x-8 lg:flex">
+        <a href="#home" class="nav-link">Home</a
+        ><a href="#games" class="nav-link">Games</a
+        ><a href="#genres" class="nav-link">Genres</a
+        ><a href="#platforms" class="nav-link">Platforms</a>
+      </div>
+    </header>
+    <!-- <div class="flex flex-1 flex-col sm:flex-row"> -->
+    <!-- HOME  (my games list section) start-->
+    <section
+      id="games-list"
+      class="basic-section bg-blue-200 flex justify-center">
+      <!-- has card for my current games
+      TODO:
+      1:add more information to card (genres)
+      2:add links to that information
+      -->
+    </section>
+    <!-- HOME  (my games list section) end-->
+
+    <!-- GAMES section start-->
+    <section id="games" class="basic_section bg-green-300"></section>
+    <!-- GAMES section end-->
+
+    <!-- GENRES section start-->
+    <section id="genres" class="basic_section bg-red-300"></section>
+    <!-- GENRES section end-->
+
+    <!-- PLATFORMS section start-->
+    <section id="platforms" class="basic_section bg-yellow-300"></section>
+    <!-- PLATFORMS section end-->
+    <!-- </div> -->
+    <footer class="bg-gray-200 p-2">Footer</footer>
+
+    <script src="./js/index.js"></script>
+  </body>
+</html>
